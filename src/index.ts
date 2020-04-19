@@ -1,6 +1,7 @@
 import {createFilter, FilterPattern} from '@rollup/pluginutils';
 import {OutputPlugin} from 'rollup';
-import {CompilerOptions, createCompilerHost, createProgram} from 'typescript';
+import {CompilerOptions, createProgram} from 'typescript';
+import {createCompilerHost} from './createCompilerHost';
 import {createModuleReducer} from './createModuleReducer';
 import {resolveCompilerOptions} from './resolveCompilerOptions';
 
@@ -10,6 +11,9 @@ export interface DtsPluginOptions {
   baseDir?: string;
 
   compilerOptions?: CompilerOptions;
+
+  /** Emit files that only have "export {};" in them */
+  emitEmpties?: false;
 
   exclude?: FilterPattern;
 
@@ -21,6 +25,7 @@ export interface DtsPluginOptions {
 export function dtsPlugin(opts: DtsPluginOptions = {}): OutputPlugin {
   const {
     tsConfig = './tsconfig.json',
+    emitEmpties = false,
     compilerOptions = {},
     include = /\.tsx?$/,
     exclude
@@ -28,7 +33,6 @@ export function dtsPlugin(opts: DtsPluginOptions = {}): OutputPlugin {
 
   const moduleReducer = createModuleReducer(createFilter(include, exclude));
   const resolvedCompilerOptions = resolveCompilerOptions(compilerOptions, tsConfig);
-  const regReplace = new RegExp(`^${resolvedCompilerOptions.outDir}/?`);
 
   return {
     generateBundle(_opts, bundle) {
@@ -39,12 +43,7 @@ export function dtsPlugin(opts: DtsPluginOptions = {}): OutputPlugin {
         return;
       }
 
-      const createdFiles: Map<string, string> = new Map();
-      const host = createCompilerHost(resolvedCompilerOptions);
-
-      host.writeFile = (fileName, data) => {
-        createdFiles.set(fileName.replace(regReplace, ''), data);
-      };
+      const {host, createdFiles} = createCompilerHost(emitEmpties, resolvedCompilerOptions);
       const prog = createProgram({
         host,
         options: resolvedCompilerOptions,
