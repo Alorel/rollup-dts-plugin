@@ -39,6 +39,7 @@ __metadata:
     "@semantic-release/git": ^9.0.0
     "@semantic-release/github": ^7.0.5
     "@semantic-release/npm": ^7.0.5
+    "@types/node": ^13.13.0
     cross-env: ^7.0.2
     cross-spawn: ^7.0.2
     custom-tslint-formatters: ^2.4.0
@@ -462,7 +463,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>= 8":
+"@types/node@npm:*, @types/node@npm:>= 8, @types/node@npm:^13.13.0":
   version: 13.13.0
   resolution: "@types/node@npm:13.13.0"
   checksum: 2/30bc5a1ade71f18de9a4324b273d140a131310e92245a449b39c3aaa1271ca03d6a59b79cb12154bbedd8960f99d184e0d757e53fe704d6d1736d9567696468e
