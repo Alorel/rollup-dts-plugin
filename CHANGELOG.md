@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/Alorel/rollup-dts-plugin/compare/1.1.0...1.1.1) (2020-04-20)
+
+
+### Bug Fixes
+
+* no longer package source maps ([](https://github.com/Alorel/rollup-dts-plugin/commit/b1de39a59794e26ab30d2ee6a5718373992925ce))
+
 # [1.1.0](https://github.com/Alorel/rollup-dts-plugin/compare/1.0.0...1.1.0) (2020-04-19)
 
 
