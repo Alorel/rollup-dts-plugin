@@ -7,15 +7,6 @@ import {dependencies, peerDependencies} from './package.json';
 
 const isDtsRun = !!process.env.DTS_RUN_DIST;
 
-function mkOutput(overrides = {}) {
-  return {
-    dir: join(__dirname, 'dist'),
-    assetFileNames: '[name][extname]',
-    sourcemap: false,
-    ...overrides
-  }
-}
-
 export default {
   input: join(__dirname, 'src', 'index.ts'),
   external: Array.from(
@@ -29,27 +20,26 @@ export default {
     !isDtsRun && cleanPlugin(),
     tscPlugin({
       tsconfig: join(__dirname, 'tsconfig.json')
-    })
-  ],
-  output: [
-    !isDtsRun && mkOutput({
-      entryFileNames: '[name].cjs.js',
-      format: 'cjs'
     }),
-    mkOutput({
-      entryFileNames: '[name].es.js',
-      format: 'esm',
-      plugins: [
-        !isDtsRun && copyPkgJson(),
-        isDtsRun && require('./dist/index.cjs').dtsPlugin(),
-        !isDtsRun && cpPlugin({
-          files: [
-            'LICENSE',
-            'CHANGELOG.md',
-            'README.md'
-          ]
-        })
-      ]
-    })
-  ]
+  ],
+  output: {
+    dir: join(__dirname, 'dist'),
+    assetFileNames: '[name][extname]',
+    entryFileNames: '[name].js',
+    sourcemap: false,
+    format: 'cjs',
+    plugins: [
+      !isDtsRun && copyPkgJson(),
+      isDtsRun && require('./dist').dtsPlugin({
+        cliArgs: ['--rootDir', 'src']
+      }),
+      !isDtsRun && cpPlugin({
+        files: [
+          'LICENSE',
+          'CHANGELOG.md',
+          'README.md'
+        ]
+      })
+    ]
+  }
 };

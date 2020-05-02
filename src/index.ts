@@ -1,64 +1,90 @@
-import {createFilter, FilterPattern} from '@rollup/pluginutils';
-import {OutputPlugin} from 'rollup';
-import {CompilerOptions, createProgram} from 'typescript';
-import {createCompilerHost} from './createCompilerHost';
-import {createModuleReducer} from './createModuleReducer';
-import {resolveCompilerOptions} from './resolveCompilerOptions';
+import * as Bluebird from 'bluebird';
+import {promises as fs} from 'fs';
+import {join} from 'path';
+import {OutputPlugin, PluginContext} from 'rollup';
+import {globPromise} from './globPromise';
+import {spawnPromise} from './spawnPromise';
+import {tmpDir} from './tmpDir';
 
 //tslint:disable:no-invalid-this
 
 export interface DtsPluginOptions {
-  baseDir?: string;
+  cliArgs?: string[];
 
-  compilerOptions?: CompilerOptions;
+  cwd?: string;
 
-  /** Emit files that only have "export {};" in them */
-  emitEmpties?: false;
-
-  exclude?: FilterPattern;
-
-  include?: FilterPattern;
-
-  tsConfig?: string;
+  /**
+   * Emit files that only have "export {};" in them
+   * @default
+   */
+  emitEmpties?: boolean;
 }
 
 export function dtsPlugin(opts: DtsPluginOptions = {}): OutputPlugin {
   const {
-    tsConfig = './tsconfig.json',
+    cwd = process.cwd(),
     emitEmpties = false,
-    compilerOptions = {},
-    include = /\.tsx?$/,
-    exclude
+    cliArgs = []
   } = opts;
 
-  const moduleReducer = createModuleReducer(createFilter(include, exclude));
-  const resolvedCompilerOptions = resolveCompilerOptions(compilerOptions, tsConfig);
+  let baseCliArgs = [
+    require.resolve('typescript/bin/tsc'),
+    ...cliArgs,
+    '--declaration',
+    '--emitDeclarationOnly',
+    '--outDir'
+  ];
 
   return {
-    generateBundle(_opts, bundle) {
-      const moduleSet: Set<string> = Object.values(bundle)
-        .reduce(moduleReducer, new Set<string>());
+    name: 'dts-plugin',
+    renderStart(this: PluginContext, _outputOpts): Promise<void> {
+      let dir: string;
+      const fileContents: { [k: string]: string } = {};
 
-      if (!moduleSet.size) {
-        return;
-      }
+      return Bluebird.resolve(tmpDir())
+        .then(d => {
+          baseCliArgs.push(dir = d);
 
-      const {host, createdFiles} = createCompilerHost(emitEmpties, resolvedCompilerOptions);
-      const prog = createProgram({
-        host,
-        options: resolvedCompilerOptions,
-        rootNames: Array.from(moduleSet)
-      });
-      prog.emit();
+          return spawnPromise(process.execPath, baseCliArgs, {cwd, stdio: 'inherit'});
+        })
+        .then(() => globPromise('**/*.d.ts', {cwd: dir}))
+        .filter(p => {
+          const fullPath = join(dir, p);
 
-      for (const [fileName, source] of createdFiles) {
-        this.emitFile({
-          fileName,
-          source,
-          type: 'asset'
+          const file$ = fs.stat(fullPath).then(s => s.isFile());
+          if (emitEmpties) {
+            return file$;
+          }
+
+          const empty$ = fs.readFile(fullPath, 'utf8')
+            .then(contents => {
+              if (contents.trim() === 'export {};') {
+                return false;
+              }
+
+              fileContents[p] = contents;
+
+              return true;
+            });
+
+          return Promise.all([file$, empty$])
+            .then(([f, e]) => f && e);
+        })
+        .map(async (fileName: string) => {
+          let source: string | Buffer = fileContents[fileName];
+          if (!source) {
+            source = await fs.readFile(join(dir, fileName));
+          }
+
+          this.emitFile({
+            fileName,
+            source,
+            type: 'asset'
+          });
+        })
+        .then(() => {
+          // noop, return void
         });
-      }
-    },
-    name: 'dts-plugin'
+    }
   };
 }

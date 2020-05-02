@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import {promises as fs} from 'fs';
 
 function loadFile(name, ctx) {
   return fs.readFile(name)
