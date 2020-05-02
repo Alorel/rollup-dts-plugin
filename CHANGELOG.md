@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/Alorel/rollup-dts-plugin/compare/1.1.1...2.0.0) (2020-05-02)
+
+
+### Bug Fixes
+
+* Fixed weird compiler issues ([](https://github.com/Alorel/rollup-dts-plugin/commit/83f1364ce6efe5b76b22c8bfa9b3d71276b844c8))
+
+
+### BREAKING CHANGES
+
+* CLI args completely reworked. Plugin spawns tsc now
+
 ## [1.1.1](https://github.com/Alorel/rollup-dts-plugin/compare/1.1.0...1.1.1) (2020-04-20)
 
 
