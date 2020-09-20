@@ -1,5 +1,5 @@
 import {SpawnOptions} from 'child_process';
-import * as spawn from 'cross-spawn';
+const spawn = require('cross-spawn');
 
 /** @internal */
 export function spawnPromise(
