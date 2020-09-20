@@ -19,7 +19,7 @@
   },
   "peerDependencies": {
     "rollup": "^2.6.0 || ^1.30.0",
-    "typescript": "^3.5.0"
+    "typescript": "^3.5.0 || ^4.0.0"
   },
   "devDependencies": {
     "@alorel-personal/conventional-changelog-alorel": "^2.1.3",
