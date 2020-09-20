@@ -1,6 +1,6 @@
 {
   "name": "@alorel/rollup-plugin-dts",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Generates .d.ts output",
   "main": "index.js",
   "repository": "https://github.com/Alorel/rollup-dts-plugin.git",

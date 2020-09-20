@@ -1,3 +1,16 @@
+## [2.0.1](https://github.com/Alorel/rollup-dts-plugin/compare/2.0.0...2.0.1) (2020-09-20)
+
+
+### Bug Fixes
+
+* Allow typescript 4 in peer dependencies ([ec2d77f](https://github.com/Alorel/rollup-dts-plugin/commit/ec2d77f1388d602b82b263104c5c7c9a2cebd7d2))
+
+
+### Maintenance
+
+* Migrate to eslint ([88ab913](https://github.com/Alorel/rollup-dts-plugin/commit/88ab91346408abc0aece1781c6df2958690d5936))
+* Update dependencies ([b186baa](https://github.com/Alorel/rollup-dts-plugin/commit/b186baad33d76e0ed167a65896aad5f37c626a20))
+
 # [2.0.0](https://github.com/Alorel/rollup-dts-plugin/compare/1.1.1...2.0.0) (2020-05-02)
 
 
