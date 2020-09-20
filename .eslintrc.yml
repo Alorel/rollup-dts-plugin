@@ -1,0 +1,4 @@
+root: true
+extends:
+  - '@alorel/eslint-config-base'
+  - '@alorel/eslint-config-typescript'

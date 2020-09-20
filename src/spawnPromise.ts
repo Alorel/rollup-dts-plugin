@@ -1,5 +1,5 @@
 import {SpawnOptions} from 'child_process';
-const spawn = require('cross-spawn');
+const spawn = require('cross-spawn'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 /** @internal */
 export function spawnPromise(

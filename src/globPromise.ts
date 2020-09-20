@@ -1,5 +1,5 @@
 import {IOptions} from 'glob';
-const glob = require('glob');
+const glob = require('glob'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 /** @internal */
 export function globPromise(pat: string, opts: IOptions = {}): Promise<string[]> {

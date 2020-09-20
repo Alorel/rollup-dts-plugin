@@ -6,7 +6,6 @@ import {globPromise} from './globPromise';
 import {spawnPromise} from './spawnPromise';
 import {tmpDir} from './tmpDir';
 
-//tslint:disable:no-invalid-this
 
 export interface DtsPluginOptions {
   cliArgs?: string[];
@@ -20,14 +19,14 @@ export interface DtsPluginOptions {
   emitEmpties?: boolean;
 }
 
-export function dtsPlugin(opts: DtsPluginOptions = {}): OutputPlugin {
+export function dtsPlugin(opts: DtsPluginOptions = {}): OutputPlugin { // eslint-disable-line max-lines-per-function
   const {
     cwd = process.cwd(),
     emitEmpties = false,
     cliArgs = []
   } = opts;
 
-  let baseCliArgs = [
+  const baseCliArgs = [
     require.resolve('typescript/bin/tsc'),
     ...cliArgs,
     '--declaration',
@@ -70,7 +69,7 @@ export function dtsPlugin(opts: DtsPluginOptions = {}): OutputPlugin {
           return Promise.all([file$, empty$])
             .then(([f, e]) => f && e);
         })
-        .map(async (fileName: string) => {
+        .map(async(fileName: string) => {
           let source: string | Buffer = fileContents[fileName];
           if (!source) {
             source = await fs.readFile(join(dir, fileName));

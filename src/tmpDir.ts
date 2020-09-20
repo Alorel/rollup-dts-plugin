@@ -5,7 +5,7 @@ tmp.setGracefulCleanup();
 /** @internal */
 export function tmpDir(): Promise<string> {
   return new Promise<string>((resolve, reject) => {
-    tmp.dir({unsafeCleanup: true, keep: false}, (err, name) => {
+    tmp.dir({keep: false, unsafeCleanup: true}, (err, name) => {
       if (err) {
         reject(err);
       } else {
